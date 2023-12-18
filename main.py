@@ -1,35 +1,19 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, status,Response
 from enum import Enum
+from typing import Optional
+from router import blog_get
+from router import blog_post
 
 
 app = FastAPI()
+app.include_router(blog_get.router)
+app.include_router(blog_post.router)
 
 
 @app.get('/')
 def hello():
     return 'hello world!'
 
-
-
-class TypeBlogs(str,Enum):
-    M1 = 'mesal 1'
-    M2 = 'mesal 2'
-    M3 = 'mesal 3'
-
-@app.get('/blog/type/{type}')
-def get_type_blog(type:TypeBlogs):
-    return {'message': f'blog type in {type}'}
-
-
-@app.get('/blog/all')
-def get_blogs():
-    return {'message': f'all blogs'}
-
-
-
-@app.get('/blog/{id}')
-def get_blog(id:int):
-    return {'message': f'blogs {id}'}
 
 
 
