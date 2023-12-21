@@ -1,6 +1,8 @@
 from sqlalchemy.orm.session import Session
 from schemas import ArticleBase
 from database.models import DbArticle
+from fastapi.exceptions import HTTPException
+from fastapi import status
 
 
 
@@ -18,5 +20,9 @@ def create_article(db:Session, request:ArticleBase):
 
 
 def get_article(id:int, db:Session):
-    return db.query(DbArticle).filter(DbArticle.id == id).first()
+    artilce = db.query(DbArticle).filter(DbArticle.id == id).first()
+    if not artilce:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"article with id {id} not found !")
 
+    return artilce

@@ -16,7 +16,7 @@ def create_article(article:ArticleBase, db=Depends(get_db)):
     return db_article.create_article(db, article)
 
 
-# read one article
+# get one article
 @router.get('/get/{id}', response_model=ArticleDisplay)
 def get_article(id: int, db=Depends(get_db)):
     return db_article.get_article(id, db)
