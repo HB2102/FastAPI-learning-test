@@ -1,16 +1,11 @@
 from fastapi import FastAPI, status,Response
 from fastapi.requests import Request
 from fastapi.responses import JSONResponse
-from enum import Enum
-from typing import Optional
-from router import blog_get
-from router import blog_post
-from router import user
-from router import article
-from router import prouct
+from router import blog_get, blog_post, user, article, prouct
 from database import models
 from database.db import engine
 from exeptions import EmailNotValid
+from auth import authentication, auth2
 
 
 
@@ -20,6 +15,7 @@ app.include_router(blog_post.router)
 app.include_router(user.router)
 app.include_router(article.router)
 app.include_router(prouct.router)
+app.include_router(authentication.router)
 models.Base.metadata.create_all(engine)
 
 

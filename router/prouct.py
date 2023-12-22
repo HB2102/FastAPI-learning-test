@@ -1,5 +1,6 @@
-from fastapi import APIRouter, Response
-from fastapi.responses import HTMLResponse, PlainTextResponse
+from fastapi import APIRouter, Response, Header, Cookie, Form
+from fastapi.responses import HTMLResponse, PlainTextResponse, Response
+
 
 
 router = APIRouter(prefix='/product', tags=['product'])
@@ -7,15 +8,41 @@ router = APIRouter(prefix='/product', tags=['product'])
 products = ['watch', 'clock', 'microphone']
 
 
+
+
+
+
 @router.get('/')
 def get_all():
     data = " ".join(products)
-    return Response(content=data, media_type='text/plain')
+    response = Response(content='data', media_type='text/plain')
+    response.set_cookie(key='cookie', value='test')
+    return response
+
+
+@router.post('/create')
+def create_product(data: str=Form(...)):
+    products.append(data)
+    return products
+
+
+
+
+
+
+@router.get('/withheader')
+def get_product(custom_header: str = Header(None),
+                cookie: str = Cookie(None)):
+    print(custom_header)
+    print(cookie)
+    return {'data':products, 'header': custom_header, 'cookie': cookie}
+
+
 
 
 @router.get('/{id}', responses={
     404: {'content': {'text/plain': {
-        'example': "prouct not found"
+        'example': "product not found"
     }},
         'description': 'when product not found'
     },
