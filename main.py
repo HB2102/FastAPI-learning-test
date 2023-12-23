@@ -1,7 +1,7 @@
 from fastapi import FastAPI, status,Response
 from fastapi.requests import Request
 from fastapi.responses import JSONResponse
-from router import blog_get, blog_post, user, article, prouct
+from router import blog_get, blog_post, user, article, prouct, file
 from database import models
 from database.db import engine
 from exeptions import EmailNotValid
@@ -16,6 +16,7 @@ app.include_router(user.router)
 app.include_router(article.router)
 app.include_router(prouct.router)
 app.include_router(authentication.router)
+app.include_router(file.router)
 models.Base.metadata.create_all(engine)
 
 
