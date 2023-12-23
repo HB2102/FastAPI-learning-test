@@ -30,6 +30,10 @@ def get_user(id,db: Session):
     return db.query(DbUser).filter(DbUser.id == id).first()
 
 
+def get_user_username(username,db: Session):
+    return db.query(DbUser).filter(DbUser.username == username).first()
+
+
 def delete_user(id, db: Session):
     user = get_user(id, db)
     db.delete(user)

@@ -1,7 +1,13 @@
 from fastapi.security import OAuth2PasswordBearer
+from fastapi import Depends, status
+from fastapi.exceptions import HTTPException
+from sqlalchemy.orm import Session
+from database.db import get_db
+from database.db_user import get_user_username
 from typing import Optional
 from datetime import datetime, timedelta
 from jose import jwt
+from jose.exceptions import JWTError
 
 
 
@@ -25,3 +31,28 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     to_encode.update({'exp': expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
+
+
+def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+    error_credential = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+                                     detail='invalid authorization',
+                                     headers={'WWW-authenticate': 'bearer'}
+                                     )
+
+    try:
+       _dict = jwt.decode(token, SECRET_KEY, algorithms=ALGORITHM)
+       username = _dict.get('sub')
+
+       if not username:
+           raise error_credential
+
+
+    except JWTError:
+        raise error_credential
+
+
+    user = get_user_username(username, db)
+
+    return user
+
+
