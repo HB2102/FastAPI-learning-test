@@ -1,3 +1,5 @@
+import time
+
 from fastapi import APIRouter, Response, Header, Cookie, Form
 from fastapi.responses import HTMLResponse, PlainTextResponse, Response
 
@@ -9,13 +11,19 @@ products = ['watch', 'clock', 'microphone']
 
 
 
+async def test_acync():
+    time.sleep(10)
+    return 'ok'
+
+
 
 
 
 @router.get('/')
-def get_all():
+async def get_all():
+    await test_acync()
     data = " ".join(products)
-    response = Response(content='data', media_type='text/plain')
+    response = Response(content=data, media_type='text/plain')
     response.set_cookie(key='cookie', value='test')
     return response
 
