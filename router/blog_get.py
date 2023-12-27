@@ -1,6 +1,6 @@
-from fastapi import APIRouter, Response,status
+from fastapi import APIRouter, Response, status
+from fastapi import BackgroundTasks
 from typing import Optional
-
 
 
 
@@ -11,8 +11,14 @@ def get_comment(id: int, comment_id: int, valid:bool=True, username: Optional[st
     return {'message': f"blog is {id} comment id {comment_id} {valid=} {username=}"}
 
 
+
+def log_data(message):
+    with open('log.txt', 'a') as file:
+        file.write(message)
+
 @router.get('/all')
-def get_blogs(page:Optional[int]=None, page_size:Optional[str]=None):
+def get_blogs(bt: BackgroundTasks, page: Optional[int]=None, page_size:Optional[str]=None):
+    bt.add_task(log_data, 'Get Blogs')
     return {'message': f'{page=} -- {page_size=}'}
 
 

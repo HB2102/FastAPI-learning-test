@@ -2,7 +2,7 @@ import time
 
 from fastapi import FastAPI, status, Response
 from fastapi.requests import Request
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, HTMLResponse
 from router import blog_get, blog_post, user, article, prouct, file
 from database import models
 from database.db import engine
@@ -10,6 +10,9 @@ from exeptions import EmailNotValid
 from auth import authentication
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.websockets import WebSocket
+from client import html
+
 
 
 app = FastAPI()
@@ -40,9 +43,25 @@ app.add_middleware(
 
 
 
+clients = []
+
+@app.websocket('/chat')
+async def websocket_endpoint(websocket: WebSocket):
+    await websocket.accept()
+    clients.append(websocket)
+    while True:
+        data = await websocket.receive_text()
+        for client in clients:
+            await client.send_text(data)
+
+
 @app.get('/')
-def hello():
-    return 'hello world!'
+def get_websocket():
+    return HTMLResponse(html)
+
+
+
+
 
 
 @app.exception_handler(EmailNotValid)
